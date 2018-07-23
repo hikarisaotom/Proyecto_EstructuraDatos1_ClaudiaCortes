@@ -6,7 +6,7 @@
 //
 // Clase: CCC209 – Q3 – 2018
 //
-// Author: Claudia Patricia Cortes Pavon 
+// Author: Claudia Patricia Cortes Pavon
 
 #pragma once
 #include "object.h"
@@ -14,22 +14,25 @@
 #include <string>
 using std::string;
 
-class DoubleLinkedList : public List{
-private:
-    struct Node {
-        Object* data;
-        Node* next;
-        Node* prev;
+class DoubleLinkedList : public List
+{
+  private:
+    struct Node
+    {
+        Object *data;
+        Node *next;
+        Node *prev;
     };
-    Node* _head;
-    DoubleLinkedList(const DoubleLinkedList&);
-    const DoubleLinkedList& operator=(const DoubleLinkedList&)const;
-public:
+    Node *_head;
+    DoubleLinkedList(const DoubleLinkedList &);
+    const DoubleLinkedList &operator=(const DoubleLinkedList &) const;
+
+  public:
     DoubleLinkedList();
     virtual ~DoubleLinkedList();
-    virtual bool Equals(const Object*)const;
-    virtual bool Insert(Object*, size_t);
+    virtual bool Equals(const Object *) const;
+    virtual bool Insert(Object *, size_t);
     virtual bool Remove(size_t);
-    virtual Object* Get(size_t)const;
-    virtual int IndexOf(const Object*)const;   
+    virtual Object *Get(size_t) const;
+    virtual int IndexOf(const Object *) const;
 };

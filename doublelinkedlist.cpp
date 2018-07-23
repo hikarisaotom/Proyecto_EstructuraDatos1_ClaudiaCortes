@@ -6,7 +6,8 @@
 //
 // Clase: CCC209 – Q3 – 2018
 //
-// Author: Claudia Patricia Cortes Pavon 
+// Author: Claudia Patricia Cortes Pavon
+
 #include "object.h"
 #include "list.h"
 #include "doublelinkedlist.h"
@@ -18,241 +19,280 @@ using namespace std;
 using std::string;
 
 /*
-Inserta un elemento en la lista enlazada
-Params: Object* element, representa el elemento que se desea insertar
-size_t position, representa la posición donde se desea insertar
-Returna: verdadero si la inserción fue exitosa, falso si no se pudo insertar
-Errores: si la posición es inválida la función termina retornando falso*/
+Constructor vacio de la clase DoubleLinkedList, inicializa en nullptr la cabecera de la lista
+Params: Ninguno
+Retorna: NO retornara nada
+Errores: */
 
-DoubleLinkedList::DoubleLinkedList(){
-  
-    _head=nullptr;
+DoubleLinkedList::DoubleLinkedList()
+{
+
+    _head = nullptr;
 }
 
-/*Constructor de copia privado para prevenir
-copias de la lista.*/
-DoubleLinkedList::DoubleLinkedList(const DoubleLinkedList&){
-
+/*
+Constructor de copia privado para prevenir
+copias de la lista.
+Params: Lista desreferenciada
+Retorna: NA
+Errores: */
+DoubleLinkedList::DoubleLinkedList(const DoubleLinkedList &)
+{
 }
 
-const DoubleLinkedList& DoubleLinkedList::operator=(const DoubleLinkedList& rhs)const {
+/*
+Sobrecarga del operador =, se
+hace privado para prevenir asignaciones.
+Params: Una lista doblemente enlazada desreferenciada
+Retorna: El parametro
+Errores: NInguno*/
+
+const DoubleLinkedList &DoubleLinkedList::operator=(const DoubleLinkedList &rhs) const
+{
     return rhs;
 }
 
-
-DoubleLinkedList::~DoubleLinkedList(){
-    cout<<"LIberando Memoria";
+/*
+Destructor del objeto de la clase DoubleLinkedList
+Params: ninguno
+Retorna: NA
+Errores: NInguno*/
+DoubleLinkedList::~DoubleLinkedList()
+{
+    cout << "Liberando Memoria" << endl;
 }
 
-bool DoubleLinkedList::Equals(const Object* toCompare) const{
-    if(toCompare==nullptr){
-        cout<<"DI"<<endl;
+/*Compara dos listas y retorna un valor booleano que indica si se cumple o no la condicion de que sean semejantes
+Retorna: Verdadero si las listas son iguales, falsas en caso contrario.
+Errores: */
+bool DoubleLinkedList::Equals(const Object *compare) const
+{
+    if (compare == nullptr)
+    {
         return false;
     }
-    if(typeid(*toCompare) != typeid(*this)){
-        cout<<"DI"<<endl;
+    if (typeid(*compare) != typeid(*this))
+    {
         return false;
     }
-    if(toCompare==this){
-        cout<<"DI"<<endl;
-        return true;
-    }
-    const DoubleLinkedList* tempList = dynamic_cast<const DoubleLinkedList*>(toCompare);
-    for(size_t i=0; i<_size;i++){
-        if(tempList->Get(i)==nullptr || Get(i)==nullptr){
-            cout<<"DI"<<endl;
-            return false;
-        }
-        if (!Get(i)->Equals(tempList->Get(i))){
-            cout<<"DI"<<endl;
+    const DoubleLinkedList *newListToCompare = dynamic_cast<const DoubleLinkedList *>(compare);
+    for (size_t i = 0; i < _size; i++)
+    {
+        if (newListToCompare->Get(i) != this->Get(i))
+        {
             return false;
         }
     }
-    cout<<"I"<<endl;
     return true;
 }
 
+/*Inserta un objeto en la lista en la posición indicada.
+Params: Recibimos como parametro el dato o valor que tendra el nodo y la posicion en la que lo insertaremos
+Retorna: Verdadero si la insercion fue exitosa, falso en caso contrario
+Errores: Si la posicion es menor que , o es mayor al tamano que tiene la lista retornara falso*/
 
-/*Recibimos como parametro el dato o valor que tendra el nodo y la posicion en la que lo insertaremos
-el anterior del nuevo nodo sera el anterior del nodo que se desplazara
-el siguiente del nuevo nodo sera el nodo desplazado 
-el nodo anterior del nodo desplazado sera el nodo nuevo, el nodo siguiente del desplazado se conserva*/
-
-bool DoubleLinkedList::Insert(Object* element, size_t position){
-    cout<<"INSERTANDO....."<<endl;
-    if(position>_size){//Validacion de posiciones
-       return false;
-   }
-
-    if(_size ==0){
-        cout<<"Entro al caso Vacio"<<endl;
-        Node * newNode=new Node();
-        cout<<"CReado"<<endl;
-        newNode->data=element;
-        cout<<"elemento"<<endl;
-        newNode->next=nullptr;
-        cout<<"next"<<endl;
-        newNode->prev=nullptr;
-        cout<<"prev"<<endl;
-        newNode->next=_head;
-        cout<<"next-cabecera"<<endl;
-        _head=newNode;
-        cout<<"cambio cabacera"<<endl;
-        _size++;
-        cout<<"nuevo size"<<_size<<endl;
-        return true;
+bool DoubleLinkedList::Insert(Object *element, size_t position)
+{
+    //cout << "INSERTANDO....." << endl;
+    if (position > _size)
+    { //Validacion de posiciones
+        return false;
     }
-
-    if(_size>0&&position==0){//Inicio
-    /*Creamos el nuevo nodo y modificamos los enlaces,
-     tambien seteamos el nuevo nodo como la cabecera*/
-     cout<<"Entro al caso inicio"<<endl;
-        Node * newNode= new Node();
-        newNode->data=element;
-        newNode->next=nullptr;     
-        newNode->prev=nullptr;
-        newNode->next=_head;
-        _head=newNode;
+    /*General para los casos: Creamos el nuevo nodo y modificamos los enlaces,
+     Casos:
+      insercion en Lista Vacia
+      insercion en el inicio
+      insercion en el final
+      insercion en medio*/
+    if (_size == 0)
+    {
+        cout << "Caso:Lista Vacia" << endl;
+        Node *newNode = new Node();
+        newNode->data = element;
+        newNode->next = nullptr;
+        newNode->prev = nullptr;
+        newNode->next = _head;
+        _head = newNode;
         _size++;
         return true;
     }
 
-    if(position==_size&&position>0){//Final
-    cout<<"Entro al caso final"<<endl;
-     Node * newNode= new Node();
-        newNode->data=element;
-        newNode->next=nullptr;
-        newNode->prev=nullptr;
-         Node * temporal=_head;
-        while(temporal->next!=nullptr){
-            temporal=temporal->next;
+    if (position == 0 && _size > 0)
+    { //Inicio
+        cout << "Caso: Lista en el Inicio" << endl;
+        Node *newNode = new Node();
+        newNode->data = element;
+        newNode->next = nullptr;
+        newNode->prev = nullptr;
+        newNode->next = _head;
+        _head = newNode;
+        _size++;
+        return true;
+    }
+
+    if (position > 0 && position == _size)
+    { //Final
+        cout << "Caso:Lista en el Final" << endl;
+        Node *newNode = new Node();
+        newNode->data = element;
+        newNode->next = nullptr;
+        newNode->prev = nullptr;
+        Node *temporal = _head;
+        while (temporal->next != nullptr)
+        {
+            temporal = temporal->next;
         }
-        temporal->next=newNode;
-        newNode->next=nullptr;
-        newNode->prev=temporal;
+        temporal->next = newNode;
+        newNode->next = nullptr;
+        newNode->prev = temporal;
         _size++;
         return true;
     }
 
-    if((position>0&&position<_size)&&_size>0){//En medio
-    cout<<"Entro al caso medio"<<endl;
-        Node * newNode= new Node();
-        newNode->data=element;
-        newNode->next=nullptr;
-        newNode->prev=nullptr;
-        Node * temporal=_head;
-        for(size_t i=0;i<position-1;i++){
-            temporal=temporal->next;
+    if ((position > 0 && position < _size) && _size > 0)
+    { //Medio
+        cout << "Caso:Lista en el Medio" << endl;
+        Node *newNode = new Node();
+        newNode->data = element;
+        newNode->next = nullptr;
+        newNode->prev = nullptr;
+        Node *temporal = _head;
+        for (size_t i = 0; i < position - 1; i++)
+        {
+            temporal = temporal->next;
         }
-       
-            temporal->next=newNode;
-            newNode->prev=temporal;
-            newNode->next=temporal->next;
-            (temporal->next)->prev=newNode;
-           
+        temporal->next = newNode;
+        newNode->prev = temporal;
+        newNode->next = temporal->next;
+        (temporal->next)->prev = newNode;
         _size++;
         return true;
     }
-   
-}//Cierre de la Llave
-
-/*Recibimos como parametro el numero que eliminaremos
-Nodo Previo al eliminado:
-su siguiente sera el nodo siguiente del eliminado 
-Nodo siguiente  al eliminado:
-su previo sera el previo al eliminado
- */
-bool DoubleLinkedList::Remove(size_t position){
-     cout<<"Eliminando....."<<endl;
-    if(position>_size){//Validacion de posiciones
-       return false;
-   }
-
-    if(_size ==0){
-        cout<<"eliminando en Vacio"<<endl;
-        cout<<"NO HAY NADA QUE ELIMINAR"<<endl;
+}
+/*Elimina de la lista un nodo y reasigna las direcciones o enlaces de los otros nodos
+Params: Recibimos como parametro la posicion que deseamos eliminar
+Retorna: Verdadero si el nodo fue eliminado exitosamente, falso en caso contrario
+Errores: Si la posicion es menor que 0 , o es mayor al tamano que tiene la lista retornara falso*/
+bool DoubleLinkedList::Remove(size_t position)
+{
+    //cout << "ELIMINANDO....." << endl;
+    if (position > _size)
+    { //Validacion de posiciones
         return false;
     }
 
-    if(_size>0&&position==0){//Inicio
-        cout<<"eliminando en Inicio"<<endl;
-        Node * temporal=_head;
-        _head=temporal->next;
-        _head->prev=nullptr;
+    /*General para los casos: Eliminamos el nodo y modificamos los enlaces,
+     Casos:
+      Remover  en Lista Vacia
+      Remover en el inicio
+      Remover en el final
+      Remover en medio*/
+
+    if (_size == 0)
+    { //Vacia
+        cout << "eliminando en lista Vacia" << endl;
+        cout << "NO hay nada que eliminar" << endl;
+        return false;
+    }
+
+    if (_size > 0 && position == 0)
+    { //Inicio
+        cout << "Eliminando en Inicio" << endl;
+        Node *temporal = _head;
+        _head = temporal->next;
+        _head->prev = nullptr;
+        delete temporal->data;
         delete temporal;
         _size--;
         return true;
     }
 
-    if(position==_size-1&&position>0){//Final
-        cout<<"Eliminando al final"<<endl;
-        Node * temporal= _head;
-         cout<<"se asigna el head"<<endl;
-        while(temporal->next!=nullptr||temporal->next!=NULL){
-            temporal=temporal-> next;
-            cout<<"Asignando siguiente"<<endl;
+    if (position == _size - 1 && position > 0)
+    { //Final
+        cout << "Eliminando al final" << endl;
+        Node *temporal = _head;
+        while (temporal->next != nullptr || temporal->next != NULL)
+        {
+            temporal = temporal->next;
         }
-        (temporal->prev)->next=nullptr;
-        cout<<"Asignando null "<<endl;
+        (temporal->prev)->next = nullptr;
+        delete temporal->data;
         delete temporal;
-        cout<<"eliminando temporal"<<endl;
         _size--;
-        cout<<"Asignando siguiente"<<endl;
         return true;
     }
 
-    if((position>0&&position<_size)&&_size>0){//En medio
-        cout<<"elimanando en medio"<<endl;
-        size_t i=0;
-        Node* temporal=_head;
-        while(i!=position){
-            temporal=temporal->next;
+    if ((position > 0 && position < _size) && _size > 0)
+    { //En medio
+        cout << "Elimanando en medio" << endl;
+        size_t i = 0;
+        Node *temporal = _head;
+        while (i != position)
+        {
+            temporal = temporal->next;
             i++;
         }
-        (temporal->next)->prev=temporal->prev;
-        (temporal->prev)->next=temporal->next;
+        (temporal->next)->prev = temporal->prev;
+        (temporal->prev)->next = temporal->next;
+        delete temporal->data;
         delete temporal;
         _size--;
         return true;
     }
- 
 }
+/*Recorremos la lista devolvemos el valor que se encuentre en la posicion que nos indican
+Params: La posicion del nodo que deseamos mostrar o traer
+Retorna: Verdadero si el nodo encontrado en la posicion dada, falso en caso contrario
+Errores: Si la posicion es menor que 0 , o es mayor al tamano que tiene la lista retornara nullptr*/
+Object *DoubleLinkedList::Get(size_t position) const
+{
+    //cout << "GET...." << endl;
+    if (position >= _size)
+    {
+        return nullptr;
+    }
+    if (position == 0)
+    { //Cabecera
+        return _head->data;
+    }
+    if (position == 1)
+    { //Primer Valor
+        return (_head->next)->data;
+    }
 
-/*recorreremos buscando y cambiando al siguiente nodo hasta llegar al limite*/
-Object* DoubleLinkedList::Get(size_t position)const{
-     cout<<"Get...."<<endl;
-     if(position>=_size){
-         return nullptr;
-     }
-     if(position==0){
-         return _head->data;
-     }
-     if(position==1){
-         Node * temporal=_head->next;
-         return temporal->data;
-     }
-     if(position>1&&position<(_size-1)){
-         Node * temporal=_head;
-         for(size_t i=0;i<position;i++){
-             temporal=temporal->next;
-         }
-         return temporal->data;
-     }
+    if (position == (_size - 1))
+    { //Final
+        Node *temporal = _head;
+        for (size_t i = 0; i < _size - 1; i++)
+        { //cambie size a size-1
+            temporal = temporal->next;
+        }
+        return temporal->data;
+    }
 
-     if(position==(_size-1)){
-         Node * temporal=_head;
-         for(size_t i=0;i<_size-1;i++){//cambie size a size-1
-             temporal=temporal->next;
-         }
-         return temporal->data;
-     }
+    if (position < (_size - 1) && position > 1)
+    { //En Medio De La Lista
+        Node *temporal = _head;
+        for (size_t i = 0; i < position; i++)
+        {
+            temporal = temporal->next;
+        }
+        return temporal->data;
+    }
 }
-/*Recorre la lista, y si encuentra coincidencia entonces devuelve la posicion en la que se encontro*/
-int DoubleLinkedList::IndexOf(const Object* rhs)const{
-     cout<<"INdexOf...."<<endl;
-    for (size_t i = 0; i < _size; i++) {
-        if (Get(i)->Equals(rhs)){
-             return i;
+/*Recorremos la lista devolvemos el indice del valor que se nos provee
+-Recorre la lista, y si encuentra coincidencia entonces devuelve la posicion en la que se encontro
+Params: el valor del nodo que esta en la posicion que retornaremos
+Retorna: la posicion del nodo si lo encontramos en la lista, -1 si no se encuentra contenido en la lista.
+Errores: si el valor no se encuentra entonces rertornaremos -1*/
+int DoubleLinkedList::IndexOf(const Object *rhs) const
+{
+    // cout << "INDEXOF...." << endl;
+    for (size_t i = 0; i < _size; i++)
+    {
+        if (Get(i)->Equals(rhs))
+        {
+            return i;
         }
     }
     return -1;
